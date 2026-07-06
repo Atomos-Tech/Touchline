@@ -19,7 +19,6 @@ import type {
   TransitLine,
 } from "@/types/domain";
 import { fetchAllMatches } from "./fifaApi";
-import { fetchHighlights as fetchYouTubeHighlights } from "./youtubeApi";
 
 export { fetchHighlights } from "./youtubeApi";
 

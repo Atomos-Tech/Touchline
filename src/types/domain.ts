@@ -17,16 +17,30 @@ export type Stage =
   | "final"
   | "third_place";
 
+/** A single goal event with scorer name and minute */
+export interface GoalEvent {
+  scorer: string; // e.g. "Kylian Mbappé"
+  minute: string; // e.g. "45'" or "90+2'" or "67'(p)"
+  isOwnGoal: boolean;
+  isPenalty: boolean;
+  team: "home" | "away";
+}
+
 export interface BaseMatch {
   id: string;
   stage: Stage;
   home: Team;
   away: Team;
+  /** Full venue string: "MetLife Stadium, NJ" */
   venue: string;
+  /** Stadium ID — used to look up coordinates and weather */
+  stadiumId: string;
   kickoff: string; // ISO
   status: MatchStatus;
   homeScore: number;
   awayScore: number;
+  /** All goals scored in this match */
+  goals: GoalEvent[];
 }
 
 export interface LiveMatch extends BaseMatch {
@@ -85,7 +99,7 @@ export interface HighlightVideo {
   publishedAt: string;
   durationSec: number;
   views: number;
-  /** YouTube maxres thumbnail URL (real) or gradient key (legacy fallback) */
+  /** YouTube maxres thumbnail URL */
   thumbnail: string;
 }
 

@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { AlertTriangle, CheckCircle2, Radio, TrendingUp } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Radio, TrendingUp, Cloud } from "lucide-react";
 import { useMemo } from "react";
 import { useLiveState } from "@/hooks/useLiveState";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CrowdHeatmap } from "@/components/CrowdHeatmap";
+import { WeatherBadge } from "@/components/WeatherBadge";
 import type { LiveState, StadiumZone } from "@/types/domain";
 
 export const Route = createFileRoute("/operations")({
@@ -79,6 +80,16 @@ function Operations() {
 
   const recs = useMemo(() => (data ? recommend(data) : []), [data]);
 
+  // Active match stadium for weather display
+  const activeStadiumId = useMemo(() => {
+    const live = data?.matches.find((m) => m.status === "live");
+    if (live) return live.stadiumId;
+    const upcoming = data?.matches
+      .filter((m) => m.status === "scheduled")
+      .sort((a, b) => +new Date(a.kickoff) - +new Date(b.kickoff))[0];
+    return upcoming?.stadiumId ?? "1";
+  }, [data]);
+
   return (
     <div className="space-y-8">
       <header className="flex flex-wrap items-start justify-between gap-4">
@@ -88,6 +99,10 @@ function Operations() {
           <p className="mt-2 max-w-2xl text-muted-foreground">
             AI-generated recommendations synthesized from live crowd, transit, and match state.
           </p>
+          {/* Live venue weather */}
+          <div className="mt-3">
+            <WeatherBadge stadiumId={activeStadiumId} />
+          </div>
         </div>
         <Badge variant="outline" className="border-pitch text-pitch">
           <span className="live-dot mr-1.5" aria-hidden /> Staff-only view
