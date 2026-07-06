@@ -8,6 +8,7 @@ import { CrowdHeatmap } from "@/components/CrowdHeatmap";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { AnalogClock } from "@/components/AnalogClock";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -74,24 +75,43 @@ function CommandCenter() {
           transition={{ duration: 0.4 }}
           className="rounded-2xl bg-deep p-6 text-deep-foreground md:p-10"
         >
-          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-widest text-pitch">
-            <span className="live-dot" aria-hidden />
-            {stageLabel} · FIFA World Cup 2026
-          </div>
-          <h1 id="hero-heading" className="mt-3 text-3xl font-bold md:text-5xl">
-            Live Command Center
-          </h1>
-          <p className="mt-2 max-w-2xl text-deep-foreground/80">
-            Real match data from the FIFA 2026 API · Official YouTube highlights ·
-            AI-powered stadium intelligence.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Badge className="border-pitch/50 bg-pitch/20 text-pitch-foreground text-xs" variant="outline">
-              ⚽ {data?.matches.filter(m => m.status === "completed").length ?? "—"} matches played
-            </Badge>
-            <Badge className="border-gold/50 bg-gold/10 text-xs" variant="outline">
-              {data?.matches.filter(m => m.status === "scheduled").length ?? "—"} upcoming
-            </Badge>
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            {/* Left: text content */}
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-widest text-pitch">
+                <span className="live-dot" aria-hidden />
+                {stageLabel} · FIFA World Cup 2026
+              </div>
+              <h1 id="hero-heading" className="mt-3 text-3xl font-bold md:text-5xl">
+                Live Command Center
+              </h1>
+              <p className="mt-2 max-w-2xl text-deep-foreground/80">
+                Real match data from the FIFA 2026 API · Official YouTube highlights ·
+                AI-powered stadium intelligence.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Badge className="border-pitch/50 bg-pitch/20 text-pitch-foreground text-xs" variant="outline">
+                  ⚽ {data?.matches.filter(m => m.status === "completed").length ?? "—"} matches played
+                </Badge>
+                <Badge className="border-gold/50 bg-gold/10 text-xs" variant="outline">
+                  {data?.matches.filter(m => m.status === "scheduled").length ?? "—"} upcoming
+                </Badge>
+              </div>
+            </div>
+
+            {/* Right: analog clock */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85, rotate: -8 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 180, damping: 20 }}
+              className="flex flex-col items-center gap-2"
+              aria-label="Current time clock"
+            >
+              <AnalogClock size={180} />
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-pitch/70">
+                Local Time
+              </p>
+            </motion.div>
           </div>
         </motion.div>
       </section>
