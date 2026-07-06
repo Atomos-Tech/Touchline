@@ -10,6 +10,7 @@ export type Team = {
 export type MatchStatus = "scheduled" | "live" | "completed";
 export type Stage =
   | "group"
+  | "round_of_32"
   | "round_of_16"
   | "quarter_final"
   | "semi_final"
@@ -84,7 +85,8 @@ export interface HighlightVideo {
   publishedAt: string;
   durationSec: number;
   views: number;
-  thumbnail: string; // gradient key
+  /** YouTube maxres thumbnail URL (real) or gradient key (legacy fallback) */
+  thumbnail: string;
 }
 
 export interface LiveState {
