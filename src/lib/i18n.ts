@@ -1,0 +1,92 @@
+// Lightweight UI i18n for the multi-lingual toggle demo.
+export const LOCALES = ["en", "es", "fr", "pt", "ar"] as const;
+export type Locale = (typeof LOCALES)[number];
+
+type Dict = Record<string, string>;
+
+const strings: Record<Locale, Dict> = {
+  en: {
+    live_command: "Live Command Center",
+    tournament: "Tournament",
+    highlights: "Highlights",
+    operations: "Operations",
+    ask_assistant: "Ask the Stadium Assistant",
+    live: "LIVE",
+    upcoming: "Upcoming",
+    completed: "Completed",
+    crowd_density: "Crowd density",
+    total_attendance: "Total attendance",
+    knockout: "Knockout stage",
+    group_stage: "Group stage (archived)",
+    send: "Send",
+    placeholder_chat: "Ask about gates, transit, live scores…",
+  },
+  es: {
+    live_command: "Centro de Mando en Vivo",
+    tournament: "Torneo",
+    highlights: "Resúmenes",
+    operations: "Operaciones",
+    ask_assistant: "Pregunta al Asistente del Estadio",
+    live: "EN VIVO",
+    upcoming: "Próximo",
+    completed: "Finalizado",
+    crowd_density: "Densidad del público",
+    total_attendance: "Asistencia total",
+    knockout: "Fase eliminatoria",
+    group_stage: "Fase de grupos (archivo)",
+    send: "Enviar",
+    placeholder_chat: "Pregunta por accesos, transporte, marcadores…",
+  },
+  fr: {
+    live_command: "Centre de Commandement Live",
+    tournament: "Tournoi",
+    highlights: "Résumés",
+    operations: "Opérations",
+    ask_assistant: "Demandez à l'Assistant du Stade",
+    live: "EN DIRECT",
+    upcoming: "À venir",
+    completed: "Terminé",
+    crowd_density: "Densité de la foule",
+    total_attendance: "Affluence totale",
+    knockout: "Phase à élimination",
+    group_stage: "Phase de groupes (archives)",
+    send: "Envoyer",
+    placeholder_chat: "Portes, transports, scores en direct…",
+  },
+  pt: {
+    live_command: "Central de Comando ao Vivo",
+    tournament: "Torneio",
+    highlights: "Melhores momentos",
+    operations: "Operações",
+    ask_assistant: "Pergunte ao Assistente do Estádio",
+    live: "AO VIVO",
+    upcoming: "Próximo",
+    completed: "Finalizado",
+    crowd_density: "Densidade de público",
+    total_attendance: "Público total",
+    knockout: "Mata-mata",
+    group_stage: "Fase de grupos (arquivo)",
+    send: "Enviar",
+    placeholder_chat: "Pergunte sobre portões, transporte, placares…",
+  },
+  ar: {
+    live_command: "مركز القيادة المباشر",
+    tournament: "البطولة",
+    highlights: "أبرز اللقطات",
+    operations: "العمليات",
+    ask_assistant: "اسأل مساعد الملعب",
+    live: "مباشر",
+    upcoming: "قادم",
+    completed: "منتهية",
+    crowd_density: "كثافة الجمهور",
+    total_attendance: "إجمالي الحضور",
+    knockout: "دور خروج المغلوب",
+    group_stage: "دور المجموعات (أرشيف)",
+    send: "إرسال",
+    placeholder_chat: "اسأل عن البوابات، النقل، النتائج…",
+  },
+};
+
+export function t(locale: Locale, key: string): string {
+  return strings[locale]?.[key] ?? strings.en[key] ?? key;
+}
