@@ -12,6 +12,9 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/AppShell";
+import { ModeProvider } from "@/contexts/ModeContext";
+import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
+import { useLocale } from "@/hooks/useLocale";
 
 function NotFoundComponent() {
   return (
@@ -76,25 +79,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "FIFA 2026 NextGen Stadium Hub — Live AI Operations" },
+      { title: "Touchline — FIFA 2026 GenAI Stadium Hub" },
       {
         name: "description",
         content:
-          "Live FIFA World Cup 2026 command center with real-time knockout scores, crowd heatmaps, official highlights, and an AI stadium assistant.",
+          "AI-powered FIFA World Cup 2026 platform for fans, organizers, and volunteers. Real-time navigation, crowd management, multilingual assistance, and operational intelligence.",
       },
-      { name: "author", content: "FIFA 2026 Stadium Hub" },
-      { property: "og:title", content: "FIFA 2026 NextGen Stadium Hub" },
+      { name: "author", content: "Touchline — FIFA 2026 Stadium Hub" },
+      { property: "og:title", content: "Touchline — FIFA 2026 GenAI Stadium Hub" },
       {
         property: "og:description",
         content:
-          "Real-time knockout tracking, crowd flow, and an AI-powered stadium assistant for FIFA World Cup 2026.",
+          "Real-time crowd management, AI-powered navigation, and multilingual stadium assistance for FIFA World Cup 2026.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "theme-color", content: "#0f1b2e" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      // Preconnect to critical third-party origins for faster first render
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" as const },
+      { rel: "dns-prefetch", href: "https://www.googleapis.com" },
+      { rel: "dns-prefetch", href: "https://worldcup26.ir" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
@@ -107,9 +116,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+/** Inner component that reads locale and updates <html> lang + dir. */
+function LocaleSync() {
+  const { locale } = useLocale();
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+  }, [locale]);
+  return null;
+}
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
         <HeadContent />
       </head>
@@ -126,9 +145,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppShell>
-        <Outlet />
-      </AppShell>
+      <AccessibilityProvider>
+        <ModeProvider>
+          <LocaleSync />
+          <AppShell>
+            <Outlet />
+          </AppShell>
+        </ModeProvider>
+      </AccessibilityProvider>
     </QueryClientProvider>
   );
 }

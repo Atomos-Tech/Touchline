@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { AlertTriangle, CheckCircle2, Radio, TrendingUp, Cloud } from "lucide-react";
-import { useMemo } from "react";
+import { AlertTriangle, CheckCircle2, Radio, TrendingUp, Cloud, Sparkles, Loader2 } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
 import { useLiveState } from "@/hooks/useLiveState";
+import { generateAIReply } from "@/lib/assistant";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CrowdHeatmap } from "@/components/CrowdHeatmap";
 import { WeatherBadge } from "@/components/WeatherBadge";
 import type { LiveState, StadiumZone } from "@/types/domain";
@@ -77,6 +79,8 @@ export function recommend(state: LiveState): OpsRecommendation[] {
 
 function Operations() {
   const { data } = useLiveState(3000);
+  const [aiBriefing, setAiBriefing] = useState<string>("");
+  const [briefingLoading, setBriefingLoading] = useState(false);
 
   const recs = useMemo(() => (data ? recommend(data) : []), [data]);
 
@@ -89,6 +93,25 @@ function Operations() {
       .sort((a, b) => +new Date(a.kickoff) - +new Date(b.kickoff))[0];
     return upcoming?.stadiumId ?? "1";
   }, [data]);
+
+  // Proactive AI situational briefing — fires once when live data first loads.
+  // Gemini summarises crowd, transit, and any critical alerts into a 2-sentence brief.
+  useEffect(() => {
+    if (!data || aiBriefing || briefingLoading) return;
+    setBriefingLoading(true);
+    generateAIReply("Give me a concise 2-sentence operational situation report covering the most critical crowd and transit issues right now.", {
+      state: data,
+      mode: "organizer",
+    }).then(({ text }) => {
+      setAiBriefing(text);
+    }).catch(() => {
+      // Fallback: synthesise from recommendations
+      const critical = recs.filter((r) => r.severity === "critical");
+      setAiBriefing(critical.length
+        ? `CRITICAL: ${critical.map((r) => r.title).join("; ")}. See recommendations below.`
+        : "All zones nominal. No immediate operational action required.");
+    }).finally(() => setBriefingLoading(false));
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="space-y-8">
@@ -108,6 +131,22 @@ function Operations() {
           <span className="live-dot mr-1.5" aria-hidden /> Staff-only view
         </Badge>
       </header>
+
+      {/* Proactive AI situational briefing */}
+      <section aria-labelledby="briefing-heading" className="rounded-xl border border-pitch/30 bg-pitch/5 p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Sparkles className="size-4 text-pitch" aria-hidden />
+          <h2 id="briefing-heading" className="text-sm font-semibold uppercase tracking-widest text-pitch">AI Situation Brief</h2>
+        </div>
+        {briefingLoading ? (
+          <div className="space-y-2" aria-busy="true" aria-label="Generating AI briefing">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+          </div>
+        ) : (
+          <p className="text-sm text-foreground leading-relaxed" aria-live="polite">{aiBriefing}</p>
+        )}
+      </section>
 
       <section aria-labelledby="ai-heading" className="space-y-3">
         <h2 id="ai-heading" className="text-xl font-semibold">

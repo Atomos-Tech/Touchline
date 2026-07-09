@@ -13,6 +13,15 @@ import { Route as TournamentRouteImport } from './routes/tournament'
 import { Route as OperationsRouteImport } from './routes/operations'
 import { Route as HighlightsRouteImport } from './routes/highlights'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VolunteerIndexRouteImport } from './routes/volunteer/index'
+import { Route as VolunteerShiftsRouteImport } from './routes/volunteer/shifts'
+import { Route as VolunteerReportRouteImport } from './routes/volunteer/report'
+import { Route as VolunteerAlertsRouteImport } from './routes/volunteer/alerts'
+import { Route as OpsSustainabilityRouteImport } from './routes/ops/sustainability'
+import { Route as OpsIncidentsRouteImport } from './routes/ops/incidents'
+import { Route as OpsAnalyticsRouteImport } from './routes/ops/analytics'
+import { Route as FanNavigateRouteImport } from './routes/fan/navigate'
+import { Route as FanAccessibilityRouteImport } from './routes/fan/accessibility'
 
 const TournamentRoute = TournamentRouteImport.update({
   id: '/tournament',
@@ -34,18 +43,81 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VolunteerIndexRoute = VolunteerIndexRouteImport.update({
+  id: '/volunteer/',
+  path: '/volunteer/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VolunteerShiftsRoute = VolunteerShiftsRouteImport.update({
+  id: '/volunteer/shifts',
+  path: '/volunteer/shifts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VolunteerReportRoute = VolunteerReportRouteImport.update({
+  id: '/volunteer/report',
+  path: '/volunteer/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VolunteerAlertsRoute = VolunteerAlertsRouteImport.update({
+  id: '/volunteer/alerts',
+  path: '/volunteer/alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpsSustainabilityRoute = OpsSustainabilityRouteImport.update({
+  id: '/ops/sustainability',
+  path: '/ops/sustainability',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpsIncidentsRoute = OpsIncidentsRouteImport.update({
+  id: '/ops/incidents',
+  path: '/ops/incidents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpsAnalyticsRoute = OpsAnalyticsRouteImport.update({
+  id: '/ops/analytics',
+  path: '/ops/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FanNavigateRoute = FanNavigateRouteImport.update({
+  id: '/fan/navigate',
+  path: '/fan/navigate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FanAccessibilityRoute = FanAccessibilityRouteImport.update({
+  id: '/fan/accessibility',
+  path: '/fan/accessibility',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/highlights': typeof HighlightsRoute
   '/operations': typeof OperationsRoute
   '/tournament': typeof TournamentRoute
+  '/fan/accessibility': typeof FanAccessibilityRoute
+  '/fan/navigate': typeof FanNavigateRoute
+  '/ops/analytics': typeof OpsAnalyticsRoute
+  '/ops/incidents': typeof OpsIncidentsRoute
+  '/ops/sustainability': typeof OpsSustainabilityRoute
+  '/volunteer/alerts': typeof VolunteerAlertsRoute
+  '/volunteer/report': typeof VolunteerReportRoute
+  '/volunteer/shifts': typeof VolunteerShiftsRoute
+  '/volunteer/': typeof VolunteerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/highlights': typeof HighlightsRoute
   '/operations': typeof OperationsRoute
   '/tournament': typeof TournamentRoute
+  '/fan/accessibility': typeof FanAccessibilityRoute
+  '/fan/navigate': typeof FanNavigateRoute
+  '/ops/analytics': typeof OpsAnalyticsRoute
+  '/ops/incidents': typeof OpsIncidentsRoute
+  '/ops/sustainability': typeof OpsSustainabilityRoute
+  '/volunteer/alerts': typeof VolunteerAlertsRoute
+  '/volunteer/report': typeof VolunteerReportRoute
+  '/volunteer/shifts': typeof VolunteerShiftsRoute
+  '/volunteer': typeof VolunteerIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +125,62 @@ export interface FileRoutesById {
   '/highlights': typeof HighlightsRoute
   '/operations': typeof OperationsRoute
   '/tournament': typeof TournamentRoute
+  '/fan/accessibility': typeof FanAccessibilityRoute
+  '/fan/navigate': typeof FanNavigateRoute
+  '/ops/analytics': typeof OpsAnalyticsRoute
+  '/ops/incidents': typeof OpsIncidentsRoute
+  '/ops/sustainability': typeof OpsSustainabilityRoute
+  '/volunteer/alerts': typeof VolunteerAlertsRoute
+  '/volunteer/report': typeof VolunteerReportRoute
+  '/volunteer/shifts': typeof VolunteerShiftsRoute
+  '/volunteer/': typeof VolunteerIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/highlights' | '/operations' | '/tournament'
+  fullPaths:
+    | '/'
+    | '/highlights'
+    | '/operations'
+    | '/tournament'
+    | '/fan/accessibility'
+    | '/fan/navigate'
+    | '/ops/analytics'
+    | '/ops/incidents'
+    | '/ops/sustainability'
+    | '/volunteer/alerts'
+    | '/volunteer/report'
+    | '/volunteer/shifts'
+    | '/volunteer/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/highlights' | '/operations' | '/tournament'
-  id: '__root__' | '/' | '/highlights' | '/operations' | '/tournament'
+  to:
+    | '/'
+    | '/highlights'
+    | '/operations'
+    | '/tournament'
+    | '/fan/accessibility'
+    | '/fan/navigate'
+    | '/ops/analytics'
+    | '/ops/incidents'
+    | '/ops/sustainability'
+    | '/volunteer/alerts'
+    | '/volunteer/report'
+    | '/volunteer/shifts'
+    | '/volunteer'
+  id:
+    | '__root__'
+    | '/'
+    | '/highlights'
+    | '/operations'
+    | '/tournament'
+    | '/fan/accessibility'
+    | '/fan/navigate'
+    | '/ops/analytics'
+    | '/ops/incidents'
+    | '/ops/sustainability'
+    | '/volunteer/alerts'
+    | '/volunteer/report'
+    | '/volunteer/shifts'
+    | '/volunteer/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +188,15 @@ export interface RootRouteChildren {
   HighlightsRoute: typeof HighlightsRoute
   OperationsRoute: typeof OperationsRoute
   TournamentRoute: typeof TournamentRoute
+  FanAccessibilityRoute: typeof FanAccessibilityRoute
+  FanNavigateRoute: typeof FanNavigateRoute
+  OpsAnalyticsRoute: typeof OpsAnalyticsRoute
+  OpsIncidentsRoute: typeof OpsIncidentsRoute
+  OpsSustainabilityRoute: typeof OpsSustainabilityRoute
+  VolunteerAlertsRoute: typeof VolunteerAlertsRoute
+  VolunteerReportRoute: typeof VolunteerReportRoute
+  VolunteerShiftsRoute: typeof VolunteerShiftsRoute
+  VolunteerIndexRoute: typeof VolunteerIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +229,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/volunteer/': {
+      id: '/volunteer/'
+      path: '/volunteer'
+      fullPath: '/volunteer/'
+      preLoaderRoute: typeof VolunteerIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/volunteer/shifts': {
+      id: '/volunteer/shifts'
+      path: '/volunteer/shifts'
+      fullPath: '/volunteer/shifts'
+      preLoaderRoute: typeof VolunteerShiftsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/volunteer/report': {
+      id: '/volunteer/report'
+      path: '/volunteer/report'
+      fullPath: '/volunteer/report'
+      preLoaderRoute: typeof VolunteerReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/volunteer/alerts': {
+      id: '/volunteer/alerts'
+      path: '/volunteer/alerts'
+      fullPath: '/volunteer/alerts'
+      preLoaderRoute: typeof VolunteerAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ops/sustainability': {
+      id: '/ops/sustainability'
+      path: '/ops/sustainability'
+      fullPath: '/ops/sustainability'
+      preLoaderRoute: typeof OpsSustainabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ops/incidents': {
+      id: '/ops/incidents'
+      path: '/ops/incidents'
+      fullPath: '/ops/incidents'
+      preLoaderRoute: typeof OpsIncidentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ops/analytics': {
+      id: '/ops/analytics'
+      path: '/ops/analytics'
+      fullPath: '/ops/analytics'
+      preLoaderRoute: typeof OpsAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fan/navigate': {
+      id: '/fan/navigate'
+      path: '/fan/navigate'
+      fullPath: '/fan/navigate'
+      preLoaderRoute: typeof FanNavigateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fan/accessibility': {
+      id: '/fan/accessibility'
+      path: '/fan/accessibility'
+      fullPath: '/fan/accessibility'
+      preLoaderRoute: typeof FanAccessibilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +300,15 @@ const rootRouteChildren: RootRouteChildren = {
   HighlightsRoute: HighlightsRoute,
   OperationsRoute: OperationsRoute,
   TournamentRoute: TournamentRoute,
+  FanAccessibilityRoute: FanAccessibilityRoute,
+  FanNavigateRoute: FanNavigateRoute,
+  OpsAnalyticsRoute: OpsAnalyticsRoute,
+  OpsIncidentsRoute: OpsIncidentsRoute,
+  OpsSustainabilityRoute: OpsSustainabilityRoute,
+  VolunteerAlertsRoute: VolunteerAlertsRoute,
+  VolunteerReportRoute: VolunteerReportRoute,
+  VolunteerShiftsRoute: VolunteerShiftsRoute,
+  VolunteerIndexRoute: VolunteerIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
