@@ -19,7 +19,7 @@ The FIFA World Cup 2026 spans **16 host cities, 104 matches, and millions of fan
 | **Accessibility** | Dedicated accessibility route finder, WCAG 2.1 AA, wheelchair gate guidance | Fan |
 | **Transportation** | Live metro/shuttle/bus status, best-transit recommendations per zone | Fan / Organizer |
 | **Sustainability** | Real-time carbon offset, renewable energy usage, and waste diversion tracking | Organizer |
-| **Multilingual Assistance** | 5-language AI assistant (EN, ES, FR, AR, HI) with automatic RTL layout for Arabic | Fan |
+| **Multilingual Assistance** | 5-language AI assistant (EN, ES, FR, PT, AR) with automatic RTL layout for Arabic | Fan |
 | **Operational Intelligence** | Proactive Gemini situational briefing auto-generated on dashboard load | Organizer |
 | **Real-Time Decision Support** | AI-derived redeployment directives, egress plans, and incident escalation routing | Organizer / Volunteer |
 
@@ -92,9 +92,9 @@ Every user prompt is sanitized server-side for XSS vectors, template injection p
 - Delayed/surge transit lines flagged with alternatives
 
 #### 🌍 Multilingual Assistance
-- AI responds in the **fan's language** — English, Spanish (ES), French (FR), Arabic (AR), Hindi (HI)
+- AI responds in the **fan's language** — English (EN), Spanish (ES), French (FR), Portuguese (PT), Arabic (AR)
 - **Automatic RTL layout** switches the entire UI direction for Arabic users
-- Language selector persists across sessions via `AccessibilityContext`
+- Language selector available in the app header — switches UI strings and AI response language instantly
 
 #### 📺 Live Match Center & Highlights
 - Real-time scores from the **FIFA 2026 official API** (`worldcup26.ir`)
