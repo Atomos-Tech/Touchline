@@ -48,7 +48,7 @@ interface OperationalAlert {
 // ---------------------------------------------------------------------------
 
 function generateAlertsFromState(
-  zones: { id: string; name: string; gate: string; capacityPct: number }[],
+  zones: { id: string; name: string; gate?: string; capacityPct: number }[],
   transit: { id: string; name: string; status: string }[],
   liveMinute?: number,
 ): OperationalAlert[] {
@@ -162,7 +162,7 @@ function AlertsPage() {
     const newAlerts = generateAlertsFromState(
       data.crowd.zones,
       data.transit,
-      live ? (live as { minute?: number }).minute : undefined,
+      live && live.status === "live" ? live.minute : undefined,
     );
     if (newAlerts.length > 0) {
       setAlerts((prev) => {

@@ -142,11 +142,19 @@ const FLAG_MAP: Record<string, string> = {
   "Equatorial Guinea": "🇬🇶",
 };
 
-// ---------------------------------------------------------------------------
-// Pure helper: parse "MM/DD/YYYY HH:MM" → ISO 8601
-// TEST MOUNTING POINT
-// ---------------------------------------------------------------------------
+/**
+ * Extract the leading integer from a minute string like "45'" or "90+2'".
+ * Used for chronological sorting of goal events.
+ */
+function getMinuteValue(m: string): number {
+  return parseInt(m.match(/\d+/)?.[0] ?? "0");
+}
 
+/**
+ * Parse the raw "MM/DD/YYYY HH:MM" date format from the FIFA API into ISO 8601.
+ * Falls back to current timestamp if the input is malformed.
+ * @example parseLocalDate("06/14/2026 20:00") === "2026-06-14T20:00:00.000Z"
+ */
 export function parseLocalDate(raw: string): string {
   const [datePart, timePart] = raw.split(" ");
   if (!datePart) return new Date().toISOString();
@@ -154,12 +162,15 @@ export function parseLocalDate(raw: string): string {
   return `${year}-${month}-${day}T${timePart ?? "00:00"}:00.000Z`;
 }
 
-// ---------------------------------------------------------------------------
-// Pure helper: parse PostgreSQL/JSON set-notation scorer string
-// e.g. '{"Kylian Mbappé 66\'","B. Barcola 82\'"}' → ["Kylian Mbappé 66'", "B. Barcola 82'"]
-// TEST MOUNTING POINT — test against all observed formats in fixtures
-// ---------------------------------------------------------------------------
-
+/**
+ * Parse PostgreSQL/JSON set-notation scorer string into an array of scorer names.
+ *
+ * Input format: `'{"Kylian Mbappé 66'","B. Barcola 82'"}'`
+ * Output: `["Kylian Mbappé 66'", "B. Barcola 82'"]`
+ *
+ * Handles escaped quotes, empty strings, and null inputs gracefully.
+ * TEST MOUNTING POINT — test against all observed formats in fixtures.
+ */
 export function parseScorers(raw: string | null | undefined): string[] {
   if (!raw || raw === "null") return [];
 
@@ -198,12 +209,14 @@ export function parseScorers(raw: string | null | undefined): string[] {
   return results.filter(Boolean);
 }
 
-// ---------------------------------------------------------------------------
-// Pure helper: parse scorer string into GoalEvent
-// e.g. "Kylian Mbappé 66'" → { scorer: "Kylian Mbappé", minute: "66'", isOwnGoal: false, isPenalty: false }
-// TEST MOUNTING POINT
-// ---------------------------------------------------------------------------
-
+/**
+ * Parse a single scorer string into a structured GoalEvent.
+ *
+ * Detects own goals `(OG)`, penalties `(p)`, and extracts the minute.
+ * @example parseGoalEvent("Kylian Mbappé 66'", "home")
+ *   → { scorer: "Kylian Mbappé", minute: "66'", isOwnGoal: false, isPenalty: false, team: "home" }
+ * TEST MOUNTING POINT
+ */
 export function parseGoalEvent(raw: string, team: "home" | "away"): GoalEvent {
   // OG detection
   const isOwnGoal = /\(OG\)/i.test(raw);
@@ -295,10 +308,9 @@ export function mapGameToMatch(game: RawGame): Match {
     parseGoalEvent(s, "away"),
   );
   // Sort all goals chronologically by minute integer
-  const goals: GoalEvent[] = [...homeGoals, ...awayGoals].sort((a, b) => {
-    const getMin = (m: string) => parseInt(m.match(/\d+/)?.[0] ?? "0");
-    return getMin(a.minute) - getMin(b.minute);
-  });
+  const goals: GoalEvent[] = [...homeGoals, ...awayGoals].sort((a, b) =>
+    getMinuteValue(a.minute) - getMinuteValue(b.minute),
+  );
 
   const base = {
     id: `g-${game.id}`,

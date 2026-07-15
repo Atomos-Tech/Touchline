@@ -48,7 +48,7 @@ export function fmtRelative(iso: string): string {
   return `${Math.round(hrs / 24)}d ago`;
 }
 
-export default function _unused() {}
+
 
 // ---------------------------------------------------------------------------
 // Components

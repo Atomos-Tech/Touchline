@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { AlertTriangle, CheckCircle2, Radio, TrendingUp, Cloud, Sparkles, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Radio, TrendingUp, Sparkles } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { useLiveState } from "@/hooks/useLiveState";
 import { generateAIReply } from "@/lib/assistant";

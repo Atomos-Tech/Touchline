@@ -96,7 +96,7 @@ interface NavigationRoute {
 export function buildFallbackRoute(
   from: EntryId,
   dest: DestId,
-  zones: { id: string; name: string; gate: string; capacityPct: number }[],
+  zones: { id: string; name: string; gate?: string; capacityPct: number }[],
 ): RouteStep[] {
   const fromLabel = ENTRY_POINTS.find((e) => e.id === from)?.label ?? from;
   const destLabel = DESTINATIONS.find((d) => d.id === dest)?.label ?? dest;

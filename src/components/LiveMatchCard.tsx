@@ -24,9 +24,7 @@ export function LiveMatchCard({ match }: { match: Match }) {
   const isScheduled = match.status === "scheduled";
   const hasGoals = match.goals.length > 0;
   const venue = STADIUM_COORDS[match.stadiumId];
-  const penalties = isCompleted
-    ? (match as { penalties?: { home: number; away: number } }).penalties
-    : undefined;
+  const penalties = isCompleted ? match.penalties : undefined;
 
   return (
     <Card className="overflow-hidden p-0 transition-all hover:shadow-md">
@@ -43,7 +41,7 @@ export function LiveMatchCard({ match }: { match: Match }) {
           <span className="flex shrink-0 items-center gap-1.5 font-bold text-live">
             <span className="live-dot" aria-hidden />
             <span aria-live="polite">
-              LIVE · {(match as { minute: number }).minute}&prime;
+              LIVE · {isLive && match.minute}&prime;
             </span>
           </span>
         ) : isCompleted ? (

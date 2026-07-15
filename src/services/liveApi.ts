@@ -42,15 +42,30 @@ const BASE_TRANSIT: TransitLine[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Simulation constants — named for readability
+// ---------------------------------------------------------------------------
+
+/** Probability a goal is scored in any given simulated minute tick. */
+const GOAL_PROBABILITY = 0.04;
+/** Maximum match minute before full-time. */
+const MAX_MATCH_MINUTE = 95;
+/** Maximum venue attendance capacity. */
+const MAX_ATTENDANCE = 82_000;
+/** Bias offset for crowd capacity drift (slightly downward). */
+const DRIFT_BIAS = 0.4;
+/** Bias offset for egress drift (slightly upward). */
+const EGRESS_BIAS = 0.3;
+
+// ---------------------------------------------------------------------------
 // Pure simulation helpers — isolated for unit testing
 // ---------------------------------------------------------------------------
 
 /** Pure: advance a live match by one simulated minute. */
 export function advanceMinute(m: LiveMatch): LiveMatch {
-  const goal = Math.random() < 0.04;
+  const goal = Math.random() < GOAL_PROBABILITY;
   return {
     ...m,
-    minute: Math.min(95, m.minute + 1),
+    minute: Math.min(MAX_MATCH_MINUTE, m.minute + 1),
     homeScore: goal && Math.random() < 0.5 ? m.homeScore + 1 : m.homeScore,
     awayScore: goal && Math.random() >= 0.5 ? m.awayScore + 1 : m.awayScore,
     lastEvent: goal ? `Goal! ${m.minute}'` : m.lastEvent,
@@ -60,7 +75,7 @@ export function advanceMinute(m: LiveMatch): LiveMatch {
 /** Pure: update crowd metric with drift + trend. */
 export function updateCrowd(prev: CrowdMetric): CrowdMetric {
   const zones = prev.zones.map((z) => {
-    const delta = (Math.random() - 0.4) * 6;
+    const delta = (Math.random() - DRIFT_BIAS) * 6;
     const next = Math.max(15, Math.min(99, z.capacityPct + delta));
     return {
       ...z,
@@ -75,9 +90,9 @@ export function updateCrowd(prev: CrowdMetric): CrowdMetric {
   });
   return {
     timestamp: new Date().toISOString(),
-    totalAttendance: Math.min(82000, prev.totalAttendance + Math.round(Math.random() * 40)),
+    totalAttendance: Math.min(MAX_ATTENDANCE, prev.totalAttendance + Math.round(Math.random() * 40)),
     ingressPerMin: Math.max(0, prev.ingressPerMin + Math.round((Math.random() - 0.5) * 20)),
-    egressPerMin: Math.max(0, prev.egressPerMin + Math.round((Math.random() - 0.3) * 30)),
+    egressPerMin: Math.max(0, prev.egressPerMin + Math.round((Math.random() - EGRESS_BIAS) * 30)),
     zones,
   };
 }

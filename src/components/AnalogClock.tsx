@@ -58,22 +58,20 @@ export function AnalogClock({ size = 160 }: { size?: number }) {
     return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
-  // ── SVG coordinate system: centre = 0,0 ───────────────────────────────
-  const R   = 90;   // outer dial radius
-  const cx  = 0;
-  const cy  = 0;
+  // ── SVG coordinate system: centre = 0,0 ───────────────────────────────────────
+  const R = 90; // outer dial radius
 
-  /** Rotate a point (0, -len) by `deg` degrees */
-  const hand = (deg: number, len: number, width: number, color: string, linecap: "round" | "butt" = "round", tail = 0) => (
+  /** Render a clock hand rotated by `deg` degrees from 12 o’clock. */
+  const hand = (deg: number, len: number, width: number, color: string) => (
     <g transform={`rotate(${deg})`}>
       <line
-        x1={cx}
-        y1={tail}
-        x2={cx}
+        x1={0}
+        y1={0}
+        x2={0}
         y2={-len}
         stroke={color}
         strokeWidth={width}
-        strokeLinecap={linecap}
+        strokeLinecap="round"
       />
     </g>
   );
@@ -187,10 +185,10 @@ export function AnalogClock({ size = 160 }: { size?: number }) {
       {hourTicks}
 
       {/* Hour hand */}
-      {hand(hands.h, 54, 5, "rgba(255,255,255,0.95)", "round")}
+      {hand(hands.h, 54, 5, "rgba(255,255,255,0.95)")}
 
       {/* Minute hand */}
-      {hand(hands.m, 72, 3.5, "rgba(255,255,255,0.90)", "round")}
+      {hand(hands.m, 72, 3.5, "rgba(255,255,255,0.90)")}
 
       {/* Second hand — live red with glow */}
       <g filter="url(#second-glow)">

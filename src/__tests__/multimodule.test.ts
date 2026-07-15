@@ -189,11 +189,10 @@ describe("formatIncidentLog", () => {
       title: "Test incident",
       description: "desc",
       location: "Gate A",
+      category: "medical",
       severity: "high",
       status: "open",
-      reportedBy: "Staff",
       timestamp: "12:00:00",
-      actions: [],
     });
     expect(log).toContain("HIGH");
     expect(log).toContain("Test incident");

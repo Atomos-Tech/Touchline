@@ -6,7 +6,7 @@
  *
  * Provides real current weather for all 16 FIFA 2026 host stadiums.
  *
- * TEST MOUNTING POINT: wmoCodeToCondition, formatTemperature, fetchStadiumWeather
+ * TEST MOUNTING POINT: wmoCodeToCondition, fetchStadiumWeather
  * are independently testable. Mock fetch() in unit tests.
  */
 

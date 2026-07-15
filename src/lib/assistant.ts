@@ -18,7 +18,7 @@
  * are all pure functions — unit-test each independently.
  */
 
-import type { LiveState } from "@/types/domain";
+import type { LiveState, LiveMatch } from "@/types/domain";
 import type { AppMode } from "@/contexts/ModeContext";
 import { callGeminiServer } from "@/services/ai";
 
@@ -132,7 +132,7 @@ Respond in the user's language (locale: ${locale}). Be concise — 2-3 sentences
 Tone: warm, enthusiastic, practical.
 
 LIVE MATCHES:
-${live.length ? live.map((m) => `- ${m.home.name} ${m.homeScore} vs ${m.awayScore} ${m.away.name} (${(m as { minute?: number }).minute}' at ${m.venue})`).join("\n") : "No matches live right now."}
+${live.length ? live.map((m) => `- ${m.home.name} ${m.homeScore} vs ${m.awayScore} ${m.away.name} (${m.status === "live" ? m.minute : "?"}' at ${m.venue})`).join("\n") : "No matches live right now."}
 
 UPCOMING:
 ${upcoming.map((m) => `- ${m.home.name} vs ${m.away.name} — ${new Date(m.kickoff).toLocaleString()} at ${m.venue}`).join("\n") || "None"}
@@ -157,9 +157,10 @@ Answer the fan's question using this real-time data. If asked about navigation o
  * TEST MOUNTING POINT
  */
 export function buildOrganizerSystemPrompt(state: LiveState): string {
-  const live = state.matches.find((m) => m.status === "live");
-  const busiest = [...state.crowd.zones].sort((a, b) => b.capacityPct - a.capacityPct)[0];
-  const quietest = [...state.crowd.zones].sort((a, b) => a.capacityPct - b.capacityPct)[0];
+  const live = state.matches.find((m): m is LiveMatch => m.status === "live");
+  const zonesByLoad = [...state.crowd.zones].sort((a, b) => b.capacityPct - a.capacityPct);
+  const busiest = zonesByLoad[0];
+  const quietest = zonesByLoad[zonesByLoad.length - 1];
   const critical = state.crowd.zones.filter((z) => z.capacityPct >= 85);
   const delayed = state.transit.filter((t) => t.status !== "normal");
 
@@ -168,7 +169,7 @@ Be direct, authoritative, and action-oriented. Use military/operational language
 Respond in 2-4 sentences. Provide specific, actionable directives.
 
 OPERATIONAL STATUS:
-- Live match: ${live ? `${live.home.name} vs ${live.away.name} — ${(live as { minute?: number }).minute}'` : "None"}
+- Live match: ${live ? `${live.home.name} vs ${live.away.name} — ${live.minute}'` : "None"}
 - Critical zones (≥85%): ${critical.length ? critical.map((z) => `${z.name} (${z.capacityPct}%)`).join(", ") : "None"}
 - Busiest gate: ${busiest.gate} at ${busiest.capacityPct}%
 - Quietest gate: ${quietest.gate} at ${quietest.capacityPct}%
@@ -186,15 +187,16 @@ Provide specific operational recommendations, staff deployment numbers, and gate
  * TEST MOUNTING POINT
  */
 export function buildVolunteerSystemPrompt(state: LiveState): string {
-  const busiest = [...state.crowd.zones].sort((a, b) => b.capacityPct - a.capacityPct)[0];
-  const quietest = [...state.crowd.zones].sort((a, b) => a.capacityPct - b.capacityPct)[0];
-  const live = state.matches.find((m) => m.status === "live");
+  const zonesByLoad = [...state.crowd.zones].sort((a, b) => b.capacityPct - a.capacityPct);
+  const busiest = zonesByLoad[0];
+  const quietest = zonesByLoad[zonesByLoad.length - 1];
+  const live = state.matches.find((m): m is LiveMatch => m.status === "live");
 
   return `You are an AI assistant for FIFA World Cup 2026 volunteers and support staff.
 Be brief, clear, and task-focused. Respond in 1-2 sentences with direct instructions.
 
 CURRENT SITUATION:
-- Live match: ${live ? `${live.home.name} vs ${live.away.name} — ${(live as { minute?: number }).minute}'` : "No match live"}
+- Live match: ${live ? `${live.home.name} vs ${live.away.name} — ${live.minute}'` : "No match live"}
 - Highest priority zone: ${busiest.name} at ${busiest.gate} (${busiest.capacityPct}%)
 - Lowest priority zone: ${quietest.name} at ${quietest.gate} (${quietest.capacityPct}%)
 - Crowd ingress: ${state.crowd.ingressPerMin}/min
@@ -229,7 +231,7 @@ export function generateReply(rawPrompt: string, ctx: AssistantContext): string 
 
   const intent = classify(prompt);
   const { state, mode = "fan" } = ctx;
-  const live = state.matches.find((m) => m.status === "live");
+  const live = state.matches.find((m): m is LiveMatch => m.status === "live");
   const zonesByLoad = [...state.crowd.zones].sort((a, b) => b.capacityPct - a.capacityPct);
   const busiest = zonesByLoad[0];
   const quietest = zonesByLoad[zonesByLoad.length - 1];
@@ -277,7 +279,7 @@ export function generateReply(rawPrompt: string, ctx: AssistantContext): string 
       return `Wheelchair-accessible entrances are at ${quietest.gate} (${quietest.name}, ${quietest.capacityPct}% — currently least busy). Lifts are available on all concourse levels. Accessible restrooms are near Sections 101 and 201. Ask any volunteer in a blue vest for further assistance.`;
 
     case "gate":
-      if (live && (live as { minute?: number }).minute! >= 80) {
+      if (live && live.minute >= 80) {
         return `Full-time approaching! Use ${quietest.gate} (${quietest.name}) at ${quietest.capacityPct}% for the fastest exit. Avoid ${busiest.gate} (${busiest.capacityPct}%). ${bestTransit.name} runs every ${bestTransit.headwayMin} min.`;
       }
       return `${quietest.gate} is fastest at ${quietest.capacityPct}% capacity. Avoid ${busiest.gate} (${busiest.capacityPct}%). Transit: ${bestTransit.name} every ${bestTransit.headwayMin} min.`;
@@ -292,7 +294,7 @@ export function generateReply(rawPrompt: string, ctx: AssistantContext): string 
 
     case "score":
       if (!live) return "No matches are live right now. Check the Tournament tab for full results.";
-      return `${live.home.flag} ${live.home.name} ${live.homeScore}–${live.awayScore} ${live.away.name} ${live.away.flag} · ${(live as { minute?: number }).minute}' at ${live.venue}.${(live as { lastEvent?: string }).lastEvent ? ` Last event: ${(live as { lastEvent?: string }).lastEvent}.` : ""}`;
+      return `${live.home.flag} ${live.home.name} ${live.homeScore}–${live.awayScore} ${live.away.name} ${live.away.flag} · ${live.minute}' at ${live.venue}.${live.lastEvent ? ` Last event: ${live.lastEvent}.` : ""}`;
 
     case "next_match": {
       const next = state.matches.filter((m) => m.status === "scheduled").sort((a, b) => +new Date(a.kickoff) - +new Date(b.kickoff))[0];

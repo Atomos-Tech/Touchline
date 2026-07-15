@@ -23,34 +23,34 @@ import { useMode, MODE_CONFIGS, type AppMode } from "@/contexts/ModeContext";
 // Navigation configs per mode
 // ---------------------------------------------------------------------------
 
-const FAN_NAV = [
+type NavItem = { to: string; label: string; icon: typeof Activity };
+
+const FAN_NAV: NavItem[] = [
   { to: "/", label: "Command", icon: Activity },
   { to: "/tournament", label: "Tournament", icon: Trophy },
   { to: "/highlights", label: "Highlights", icon: Video },
   { to: "/fan/navigate", label: "Navigate", icon: Map },
   { to: "/fan/accessibility", label: "Accessibility", icon: Accessibility },
-] as const;
+];
 
-const ORGANIZER_NAV = [
+const ORGANIZER_NAV: NavItem[] = [
   { to: "/operations", label: "Operations", icon: Radio },
   { to: "/ops/incidents", label: "Incidents", icon: FileWarning },
   { to: "/ops/sustainability", label: "Sustainability", icon: Leaf },
   { to: "/ops/analytics", label: "Analytics", icon: BarChart3 },
-] as const;
+];
 
-const VOLUNTEER_NAV = [
+const VOLUNTEER_NAV: NavItem[] = [
   { to: "/volunteer", label: "My Tasks", icon: ClipboardList },
   { to: "/volunteer/report", label: "Report", icon: FileWarning },
   { to: "/volunteer/shifts", label: "Shifts", icon: Calendar },
   { to: "/volunteer/alerts", label: "Alerts", icon: Bell },
-] as const;
+];
 
-type NavItem = { to: string; label: string; icon: typeof Activity };
-
-function getNav(mode: AppMode): readonly NavItem[] {
-  if (mode === "organizer") return ORGANIZER_NAV as unknown as readonly NavItem[];
-  if (mode === "volunteer") return VOLUNTEER_NAV as unknown as readonly NavItem[];
-  return FAN_NAV as unknown as readonly NavItem[];
+function getNav(mode: AppMode): NavItem[] {
+  if (mode === "organizer") return ORGANIZER_NAV;
+  if (mode === "volunteer") return VOLUNTEER_NAV;
+  return FAN_NAV;
 }
 
 // ---------------------------------------------------------------------------

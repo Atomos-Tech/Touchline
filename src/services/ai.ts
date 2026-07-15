@@ -69,7 +69,6 @@ export const callGeminiServer = createServerFn({ method: "POST" })
       return { text: "", usedAI: false, error: "AI_UNAVAILABLE" };
     }
 
-
     try {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
