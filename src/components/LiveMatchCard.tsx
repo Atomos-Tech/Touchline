@@ -63,7 +63,7 @@ export function LiveMatchCard({ match }: { match: Match }) {
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 py-4">
         <TeamCell flag={match.home.flag} name={match.home.name} />
 
-        <div className="text-center">
+        <div className="text-center whitespace-nowrap">
           <motion.div
             key={`${match.homeScore}-${match.awayScore}`}
             initial={{ scale: 0.88, opacity: 0 }}
