@@ -2,6 +2,8 @@
 
 > **An AI-powered, real-time platform that enhances stadium operations and the tournament experience for fans, organizers, volunteers, and venue staff — powered by Google Gemini 2.0 Flash.**
 
+**Chosen Vertical:** Sports & Entertainment / Smart City Infrastructure (Focus: Mega-Event Operations, Crowd Management, and Fan Experience)
+
 [![Live Demo](https://img.shields.io/badge/Live_Demo-touchline--ebon--kappa.vercel.app-success?style=for-the-badge)](https://touchline-ebon-kappa.vercel.app/)
 [![Tests](https://img.shields.io/badge/Tests-163%2F163_Passing-brightgreen?style=for-the-badge)](./src/__tests__)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?style=for-the-badge)](./tsconfig.json)
@@ -183,6 +185,18 @@ Every user prompt is sanitized server-side for XSS vectors, template injection p
 ```
 
 Run with: `npm test`
+
+---
+
+## 📝 Key Assumptions
+
+To implement this solution for the FIFA World Cup 2026, the following architectural and operational assumptions were made:
+
+1. **Real-Time Data Availability:** The application assumes the host stadium possesses IoT infrastructure (e.g., smart turnstiles, optical crowd counting) capable of feeding live zone capacity metrics to the application state.
+2. **Transit API Integrations:** We assume local municipal transit authorities (metro, shuttles, parking) provide public APIs for live scheduling and delay data to power the transit integration features.
+3. **Baseline Connectivity:** The solution assumes volunteers and fans have baseline access to cellular networks or stadium Wi-Fi. To mitigate patchy connections, the app uses a lightweight Edge SSR architecture to minimize client-side payload.
+4. **Sustainability Heuristics:** In the absence of hardware energy meters, the sustainability metrics (carbon offset, waste generation) use evidence-based algorithmic heuristics. For example, the carbon saved metric assumes a 60% baseline transit adoption rate among attendees.
+5. **API Limits:** We assume enterprise-tier access to the Google Gemini API for production. For this prototype scope, a server-side token-bucket rate limiter (20 requests/minute) is artificially enforced to prevent quota exhaustion.
 
 ---
 
